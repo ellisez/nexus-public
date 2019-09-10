@@ -21,6 +21,9 @@ import org.sonatype.nexus.common.entity.EntityMetadata;
 
 import org.joda.time.DateTime;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+
 /**
  * Base abstract decorator for the {@link Component} class
  *
@@ -152,5 +155,65 @@ public abstract class DecoratedComponent
   @Override
   public void setEntityMetadata(@Nullable final EntityMetadata metadata) {
     component.setEntityMetadata(metadata);
+  }
+
+  @Override
+  public String keyword() {
+    return component.keyword();
+  }
+
+  @Override
+  public Component keyword(String keyword) {
+    return component.keyword(keyword);
+  }
+
+  @Override
+  public LinkedHashMap<String, List<String>> tag() {
+    return component.tag();
+  }
+
+  @Override
+  public Component tag(LinkedHashMap<String, List<String>> tag) {
+    return component.tag(tag);
+  }
+
+  @Override
+  public String parent() {
+    return component.parent();
+  }
+
+  @Override
+  public Component parent(String parent) {
+    return component.parent(parent);
+  }
+
+  @Override
+  public String source() {
+    return component.source();
+  }
+
+  @Override
+  public Component source(String source) {
+    return component.source(source);
+  }
+
+  @Override
+  public List<String> category() {
+    return component.category();
+  }
+
+  @Override
+  public Component category(List<String> category) {
+    return component.category(category);
+  }
+
+  @Override
+  public List<String> platform() {
+    return component.platform();
+  }
+
+  @Override
+  public Component platform(List<String> platform) {
+    return component.platform(platform);
   }
 }

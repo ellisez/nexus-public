@@ -13,6 +13,8 @@
 package org.sonatype.nexus.repository.storage;
 
 import javax.annotation.Nullable;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * Metadata about a software component.
@@ -65,4 +67,28 @@ public interface Component
         ", version=" + version() +
         ", format=" + format();
   }
+
+  String keyword();
+
+  Component keyword(String keyword);
+
+  LinkedHashMap<String, List<String>> tag();
+
+  Component tag(LinkedHashMap<String, List<String>> tag);
+
+  String parent();
+
+  Component parent(String parent);
+
+  String source();
+
+  Component source(String source);
+
+  List<String> category();
+
+  Component category(List<String> category);
+
+  List<String> platform();
+
+  Component platform(List<String> platform);
 }

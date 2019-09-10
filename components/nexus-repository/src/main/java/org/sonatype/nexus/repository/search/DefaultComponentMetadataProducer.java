@@ -87,6 +87,18 @@ public class DefaultComponentMetadataProducer
 
   private final Set<ComponentMetadataProducerExtension> componentMetadataProducerExtensions;
 
+  private static final String KEYWORD = "keyword";
+
+  private static final String TAG = "tag";
+
+  private static final String PARENT = "parent";
+
+  private static final String SOURCE = "source";
+
+  private static final String CATEGORY = "category";
+
+  private static final String PLATFORM = "platform";
+
   @Inject
   public DefaultComponentMetadataProducer(final Set<ComponentMetadataProducerExtension> componentMetadataProducerExtensions) {
     this.componentMetadataProducerExtensions = checkNotNull(componentMetadataProducerExtensions);
@@ -107,6 +119,13 @@ public class DefaultComponentMetadataProducer
     put(metadata, NAME, component.name());
     put(metadata, VERSION, component.version());
     put(metadata, ATTRIBUTES, component.attributes().backing());
+
+    put(metadata, KEYWORD, component.keyword());
+    put(metadata, TAG, component.tag());
+    put(metadata, PARENT, component.parent());
+    put(metadata, SOURCE, component.source());
+    put(metadata, CATEGORY, component.category());
+    put(metadata, PLATFORM, component.platform());
 
     // Prepend numbers in the version with 0s to make each number 5 digits
     String normalizedVersion = getNormalizedVersion(component);

@@ -14,7 +14,7 @@ package org.sonatype.nexus.repository.maven.internal;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Map;
+import java.util.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -23,11 +23,13 @@ import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 import javax.validation.groups.Default;
 
+import com.google.gson.Gson;
 import org.sonatype.nexus.blobstore.api.Blob;
 import org.sonatype.nexus.common.collect.AttributesMap;
 import org.sonatype.nexus.common.collect.NestedAttributesMap;
 import org.sonatype.nexus.common.hash.HashAlgorithm;
 import org.sonatype.nexus.repository.FacetSupport;
+import org.sonatype.nexus.repository.Type;
 import org.sonatype.nexus.repository.config.Configuration;
 import org.sonatype.nexus.repository.config.ConfigurationFacet;
 import org.sonatype.nexus.repository.maven.LayoutPolicy;
@@ -38,13 +40,7 @@ import org.sonatype.nexus.repository.maven.MavenPath.HashType;
 import org.sonatype.nexus.repository.maven.MavenPathParser;
 import org.sonatype.nexus.repository.maven.VersionPolicy;
 import org.sonatype.nexus.repository.maven.internal.validation.MavenMetadataContentValidator;
-import org.sonatype.nexus.repository.storage.Asset;
-import org.sonatype.nexus.repository.storage.AssetBlob;
-import org.sonatype.nexus.repository.storage.Bucket;
-import org.sonatype.nexus.repository.storage.Component;
-import org.sonatype.nexus.repository.storage.StorageFacet;
-import org.sonatype.nexus.repository.storage.StorageTx;
-import org.sonatype.nexus.repository.storage.TempBlob;
+import org.sonatype.nexus.repository.storage.*;
 import org.sonatype.nexus.repository.transaction.TransactionalDeleteBlob;
 import org.sonatype.nexus.repository.transaction.TransactionalStoreBlob;
 import org.sonatype.nexus.repository.transaction.TransactionalStoreMetadata;
@@ -340,7 +336,7 @@ public class MavenFacetImpl
       componentAttributes.set(P_VERSION, coordinates.getVersion());
       componentAttributes.set(P_BASE_VERSION, coordinates.getBaseVersion());
       if (path.isPom()) {
-        fillInFromModel(path, assetBlob, component.formatAttributes());
+        fillInFromModel(path, assetBlob, component);
       }
       tx.saveComponent(component);
     }
@@ -375,7 +371,7 @@ public class MavenFacetImpl
 
     // avoid re-reading pom.xml if it's a duplicate of the old asset
     if (updatePomModel && !assetBlob.isDuplicate()) {
-      fillInFromModel(path, assetBlob, component.formatAttributes());
+      fillInFromModel(path, assetBlob, component);
       tx.saveComponent(component);
     }
 
@@ -387,8 +383,9 @@ public class MavenFacetImpl
    */
   private void fillInFromModel(final MavenPath mavenPath,
       final AssetBlob assetBlob,
-      final NestedAttributesMap componentAttributes) throws IOException
+      final Component component) throws IOException
   {
+    final NestedAttributesMap componentAttributes = component.formatAttributes();
     Model model = MavenModels.readModel(assetBlob.getBlob().getInputStream());
     if (model == null) {
       log.warn("Could not parse POM: {} @ {}", getRepository().getName(), mavenPath.getPath());
@@ -398,6 +395,34 @@ public class MavenFacetImpl
     componentAttributes.set(P_PACKAGING, packaging == null ? "jar" : packaging);
     componentAttributes.set(P_POM_NAME, model.getName());
     componentAttributes.set(P_POM_DESCRIPTION, model.getDescription());
+
+    Properties properties = model.getProperties();
+    if (properties != null && properties.size() > 0) {
+      String json = properties.getProperty("json");
+      if (json != null) {
+        ComponentProperties componentProperties = new Gson().fromJson(json, ComponentProperties.class);
+        LinkedHashMap<String, List<String>> tag = componentProperties.getTag();
+        StringBuffer keyword = new StringBuffer();
+        if (tag != null) {
+          for (Map.Entry<String, List<String>> entry : tag.entrySet()) {
+            List<String> list = entry.getValue();
+            for (String value: list) {
+              if (keyword.length() > 0) {
+                keyword.append(" ");
+              }
+              keyword.append(value);
+            }
+          }
+        }
+
+        component.tag(tag);
+        component.keyword(keyword.toString());
+        component.parent(componentProperties.getParent());
+        component.source(componentProperties.getSource());
+        component.category(componentProperties.getCategory());
+        component.platform(componentProperties.getPlatform());
+      }
+    }
   }
 
   @TransactionalStoreMetadata

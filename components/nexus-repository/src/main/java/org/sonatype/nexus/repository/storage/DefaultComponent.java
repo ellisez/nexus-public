@@ -14,6 +14,9 @@ package org.sonatype.nexus.repository.storage;
 
 import javax.annotation.Nullable;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+
 import static org.sonatype.nexus.repository.storage.ComponentEntityAdapter.P_GROUP;
 import static org.sonatype.nexus.repository.storage.ComponentEntityAdapter.P_VERSION;
 
@@ -28,6 +31,17 @@ public class DefaultComponent
 
   private String version;
 
+  private String keyword;
+
+  private LinkedHashMap<String, List<String>> tag;
+
+  private String parent;
+
+  private String source;
+
+  private List<String> category;
+
+  private List<String> platform;
   /**
    * Gets the group or {@code null} if undefined.
    */
@@ -84,4 +98,69 @@ public class DefaultComponent
         '}';
   }
 
+  @Override
+  public String keyword() {
+    return keyword;
+  }
+
+  @Override
+  public DefaultComponent keyword(String keyword) {
+    this.keyword = keyword;
+    return this;
+  }
+
+  @Override
+  public LinkedHashMap<String, List<String>> tag() {
+    return tag;
+  }
+
+  @Override
+  public DefaultComponent tag(LinkedHashMap<String, List<String>> tag) {
+    this.tag = tag;
+    return this;
+  }
+
+  @Override
+  public String parent() {
+    return parent;
+  }
+
+  @Override
+  public Component parent(String parent) {
+    this.parent = parent;
+    return this;
+  }
+
+  @Override
+  public String source() {
+    return source;
+  }
+
+  @Override
+  public Component source(String source) {
+    this.source = source;
+    return this;
+  }
+
+  @Override
+  public List<String> category() {
+    return category;
+  }
+
+  @Override
+  public Component category(List<String> category) {
+    this.category = category;
+    return this;
+  }
+
+  @Override
+  public List<String> platform() {
+    return platform;
+  }
+
+  @Override
+  public DefaultComponent platform(List<String> platform) {
+    this.platform = platform;
+    return this;
+  }
 }

@@ -12,9 +12,7 @@
  */
 package org.sonatype.nexus.repository.storage;
 
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -74,6 +72,18 @@ public class ComponentEntityAdapter
    * Key of {@link Component} ci_name (case-insensitive name) field.
    */
   public static final String P_CI_NAME = "ci_name";
+
+  public static final String P_KEYWORD = "keyword";
+
+  public static final String P_TAG = "tag";
+
+  public static final String P_PARENT = "parent";
+
+  public static final String P_SOURCE = "source";
+
+  public static final String P_CATEGORY = "category";
+
+  public static final String P_PLATFORM = "platform";
 
   public static final String I_BUCKET_GROUP_NAME_VERSION = new OIndexNameBuilder()
       .type(DB_CLASS)
@@ -211,10 +221,22 @@ public class ComponentEntityAdapter
     String group = document.field(P_GROUP, OType.STRING);
     String name = document.field(P_NAME, OType.STRING);
     String version = document.field(P_VERSION, OType.STRING);
+    String keyword = document.field(P_KEYWORD, OType.STRING);
+    LinkedHashMap<String, List<String>> tag = document.field(P_TAG, LinkedHashMap.class);
+    String parent = document.field(P_PARENT, OType.STRING);
+    String source = document.field(P_SOURCE, OType.STRING);
+    List<String> category = document.field(P_CATEGORY, List.class);
+    List<String> platform = document.field(P_PLATFORM, List.class);
 
     entity.group(group);
     entity.name(name);
     entity.version(version);
+    entity.keyword(keyword);
+    entity.tag(tag);
+    entity.parent(parent);
+    entity.source(source);
+    entity.category(category);
+    entity.platform(platform);
 
     componentEntityAdapterExtensions.forEach(d -> d.readFields(document, entity));
   }
@@ -231,6 +253,18 @@ public class ComponentEntityAdapter
     // indirect queries against CI fields when another table is involved lose their case-insensitiveness, so we store
     // as lowercase to permit those kinds of queries to query on lowercase as a workaround for now.
     document.field(P_CI_NAME, entity.name().toLowerCase(Locale.ENGLISH));
+
+    document.field(P_KEYWORD, entity.keyword());
+
+    document.field(P_TAG, entity.tag());
+
+    document.field(P_PARENT, entity.parent());
+
+    document.field(P_SOURCE, entity.source());
+
+    document.field(P_CATEGORY, entity.category());
+
+    document.field(P_PLATFORM, entity.platform());
 
     componentEntityAdapterExtensions.forEach(d -> d.writeFields(document, entity));
   }
