@@ -136,9 +136,12 @@ public class NpmFacetImpl
     NpmPackageId npmPackageId = NpmPackageId.parse(packageId);
     Asset asset = NpmFacetUtils.findTarballAsset(tx, bucket, npmPackageId, tarballName);
 
+    Blob blob = tx.requireBlob(assetBlob.getBlobRef());
+    Map<String, Object> packageJson = npmPackageParser.parsePackageJson(blob::getInputStream);
+
     if (asset == null) {
       String version = extractVersion(tarballName);
-      Component tarballComponent = getOrCreateTarballComponent(tx, repository, npmPackageId, version);
+      Component tarballComponent = getOrCreateTarballComponent(tx, repository, npmPackageId, version, packageJson);
       asset = tx.firstAsset(tarballComponent);
 
       if (asset == null) {
@@ -146,7 +149,7 @@ public class NpmFacetImpl
       }
     }
 
-    maybeExtractFormatAttributes(tx, packageId, asset, assetBlob);
+    maybeExtractFormatAttributes(tx, packageId, asset, packageJson);
     saveAsset(tx, asset, assetBlob, TARBALL, contentAttributes);
 
     return asset;
@@ -167,15 +170,14 @@ public class NpmFacetImpl
   private void maybeExtractFormatAttributes(final StorageTx tx,
                                             final String packageId,
                                             final Asset asset,
-                                            final AssetBlob assetBlob)
+                                            final Map<String, Object> packageJson)
   {
-    Blob blob = tx.requireBlob(assetBlob.getBlobRef());
-    Map<String, Object> formatAttributes = npmPackageParser.parsePackageJson(blob::getInputStream);
-    if (formatAttributes.isEmpty()) {
+
+    if (packageJson.isEmpty()) {
       log.warn("No format attributes found in package.json for npm package ID {}, will not be searchable", packageId);
     }
     else {
-      NpmFormatAttributesExtractor formatAttributesExtractor = new NpmFormatAttributesExtractor(formatAttributes);
+      NpmFormatAttributesExtractor formatAttributesExtractor = new NpmFormatAttributesExtractor(packageJson);
       formatAttributesExtractor.copyFormatAttributes(asset);
     }
   }

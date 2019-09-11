@@ -21,6 +21,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,14 +43,14 @@ import com.google.common.base.Supplier;
  */
 public final class NpmJsonUtils
 {
-  public static final TypeReference<HashMap<String, Object>> rawMapJsonTypeRef;
+  public static final TypeReference<LinkedHashMap<String, Object>> rawMapJsonTypeRef;
 
   static final TypeReference<List<Object>> rawListJsonTypeRef;
 
   public static final ObjectMapper mapper;
 
   static {
-    rawMapJsonTypeRef = new TypeReference<HashMap<String, Object>>() {
+    rawMapJsonTypeRef = new TypeReference<LinkedHashMap<String, Object>>() {
       // nop
     };
     rawListJsonTypeRef = new TypeReference<List<Object>>() {

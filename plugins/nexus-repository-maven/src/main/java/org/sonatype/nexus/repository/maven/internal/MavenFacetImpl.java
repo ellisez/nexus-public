@@ -23,6 +23,7 @@ import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 import javax.validation.groups.Default;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import org.sonatype.nexus.blobstore.api.Blob;
 import org.sonatype.nexus.common.collect.AttributesMap;
@@ -118,6 +119,8 @@ public class MavenFacetImpl
   private final MavenMetadataContentValidator metadataValidator;
 
   private final boolean mavenMetadataValidationEnabled;
+
+  private final ObjectMapper objectMapper = new ObjectMapper();
 
   @Inject
   public MavenFacetImpl(final Map<String, MavenPathParser> mavenPathParsers,
@@ -400,27 +403,8 @@ public class MavenFacetImpl
     if (properties != null && properties.size() > 0) {
       String json = properties.getProperty("json");
       if (json != null) {
-        ComponentProperties componentProperties = new Gson().fromJson(json, ComponentProperties.class);
-        LinkedHashMap<String, List<String>> tag = componentProperties.getTag();
-        StringBuffer keyword = new StringBuffer();
-        if (tag != null) {
-          for (Map.Entry<String, List<String>> entry : tag.entrySet()) {
-            List<String> list = entry.getValue();
-            for (String value: list) {
-              if (keyword.length() > 0) {
-                keyword.append(" ");
-              }
-              keyword.append(value);
-            }
-          }
-        }
-
-        component.tag(tag);
-        component.keyword(keyword.toString());
-        component.parent(componentProperties.getParent());
-        component.source(componentProperties.getSource());
-        component.category(componentProperties.getCategory());
-        component.platform(componentProperties.getPlatform());
+        ComponentProperties componentProperties = objectMapper.readValue(json, ComponentProperties.class);
+        componentProperties.fillInComponent(component);
       }
     }
   }

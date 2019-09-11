@@ -36,15 +36,7 @@ import org.sonatype.nexus.common.collect.NestedAttributesMap;
 import org.sonatype.nexus.common.hash.HashAlgorithm;
 import org.sonatype.nexus.orient.entity.AttachedEntityHelper;
 import org.sonatype.nexus.repository.Repository;
-import org.sonatype.nexus.repository.storage.Asset;
-import org.sonatype.nexus.repository.storage.AssetBlob;
-import org.sonatype.nexus.repository.storage.Bucket;
-import org.sonatype.nexus.repository.storage.Component;
-import org.sonatype.nexus.repository.storage.MissingAssetBlobException;
-import org.sonatype.nexus.repository.storage.Query;
-import org.sonatype.nexus.repository.storage.StorageFacet;
-import org.sonatype.nexus.repository.storage.StorageTx;
-import org.sonatype.nexus.repository.storage.TempBlob;
+import org.sonatype.nexus.repository.storage.*;
 import org.sonatype.nexus.repository.view.Content;
 import org.sonatype.nexus.repository.view.payloads.BlobPayload;
 import org.sonatype.nexus.repository.view.payloads.StreamPayload;
@@ -55,8 +47,6 @@ import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.orientechnologies.orient.core.metadata.schema.OType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static com.google.common.collect.Maps.newHashMap;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -447,7 +437,8 @@ public final class NpmFacetUtils
   static Component getOrCreateTarballComponent(final StorageTx tx,
                                                final Repository repository,
                                                final NpmPackageId packageId,
-                                               final String version)
+                                               final String version,
+                                               final Map<String, Object> packageJson)
   {
     Component tarballComponent = findPackageTarballComponent(tx, repository, packageId, version);
     if (tarballComponent == null) {
@@ -455,6 +446,10 @@ public final class NpmFacetUtils
           .group(packageId.scope())
           .name(packageId.name())
           .version(version);
+      if (packageJson != null) {
+        Map<String, Object> properties = (Map<String, Object>) packageJson.get("properties");
+        ComponentProperties.fillInComponent(properties, tarballComponent);
+      }
       tx.saveComponent(tarballComponent);
     }
     return tarballComponent;
