@@ -22,6 +22,9 @@ public class ComponentProperties {
     }
 
     public static void fillInComponent(final Map<String, Object> map, final Component component) {
+        if (map==null) {
+            return;
+        }
         LinkedHashMap<String, List<String>> tag = (LinkedHashMap<String, List<String>>) map.get("tag");
         String parent = (String) map.get("parent");
         String source = (String) map.get("source");
