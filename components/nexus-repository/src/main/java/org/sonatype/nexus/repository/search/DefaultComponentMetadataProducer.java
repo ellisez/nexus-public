@@ -81,6 +81,16 @@ public class DefaultComponentMetadataProducer
 
   public static final String LAST_DOWNLOADED_KEY = "lastDownloaded";
 
+  public static final String TAG = "tag";
+
+  public static final String PARENT = "parent";
+
+  public static final String SOURCE = "source";
+
+  public static final String CATEGORY = "category";
+
+  public static final String PLATFORM = "platform";
+
   private static final Logger log = LoggerFactory.getLogger(DefaultComponentMetadataProducer.class);
 
   private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern("YYYY-MM-dd'T'HH:mm:ss.SSSZ");
@@ -88,16 +98,6 @@ public class DefaultComponentMetadataProducer
   private final Set<ComponentMetadataProducerExtension> componentMetadataProducerExtensions;
 
   private static final String KEYWORD = "keyword";
-
-  private static final String TAG = "tag";
-
-  private static final String PARENT = "parent";
-
-  private static final String SOURCE = "source";
-
-  private static final String CATEGORY = "category";
-
-  private static final String PLATFORM = "platform";
 
   @Inject
   public DefaultComponentMetadataProducer(final Set<ComponentMetadataProducerExtension> componentMetadataProducerExtensions) {

@@ -83,7 +83,7 @@ set LOCAL_CLASSPATH=%CLASSPATH%
 set JAVA_MODE=-server
 
 set CLASSPATH=%LOCAL_CLASSPATH%;%KARAF_BASE%\conf
-set DEFAULT_JAVA_DEBUG_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005
+set DEFAULT_JAVA_DEBUG_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=9505
 
 if "%LOCAL_CLASSPATH%" == "" goto :KARAF_CLASSPATH_EMPTY
     set CLASSPATH=%LOCAL_CLASSPATH%;%KARAF_BASE%\conf
@@ -209,7 +209,7 @@ rem SONATYPE: preferred IPv4 by default
 if "%KARAF_OPTS%" == "" set KARAF_OPTS=-Djava.net.preferIPv4Stack=true
 
 rem SONATYPE: removed -Dcom.sun.management.jmxremote and unused derby properties
-set DEFAULT_JAVA_OPTS=%JAVA_MODE% -Xms%JAVA_MIN_MEM% -Xmx%JAVA_MAX_MEM% -XX:MaxDirectMemorySize=%DIRECT_MAX_MEM% -XX:+UnlockDiagnosticVMOptions -XX:+UnsyncloadClass -XX:+LogVMOutput -XX:LogFile=..\sonatype-work\nexus3\log\jvm.log -XX:-OmitStackTraceInFastThrow 
+set DEFAULT_JAVA_OPTS=%JAVA_MODE% -Xms%JAVA_MIN_MEM% -Xmx%JAVA_MAX_MEM% -XX:MaxDirectMemorySize=%DIRECT_MAX_MEM% -XX:+UnlockDiagnosticVMOptions -XX:+UnsyncloadClass -XX:+LogVMOutput -XX:LogFile=..\sonatype-work\nexus3\log\jvm.log -XX:-OmitStackTraceInFastThrow
 
 rem SONATYPE: removed -XX:PermSize and -XX:MaxPermSize
 

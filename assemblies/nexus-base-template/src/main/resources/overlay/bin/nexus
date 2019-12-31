@@ -299,7 +299,7 @@ setupDefaults() {
         fi
     done
 
-    DEFAULT_JAVA_DEBUG_PORT="5005"
+    DEFAULT_JAVA_DEBUG_PORT="9505"
     if [ "x$JAVA_DEBUG_PORT" = "x" ]; then
         JAVA_DEBUG_PORT="$DEFAULT_JAVA_DEBUG_PORT"
     fi
@@ -339,7 +339,7 @@ init() {
 
     # Determine the JVM vendor
     detectJVM
-    
+
     # Determine the JVM version >= 1.6
     checkJvmVersion
 

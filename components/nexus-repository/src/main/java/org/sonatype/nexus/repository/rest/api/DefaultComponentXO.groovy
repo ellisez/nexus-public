@@ -45,7 +45,15 @@ class DefaultComponentXO
 
   List<AssetXO> assets
 
-  /**
+  LinkedHashMap<String, List<String>> tag
+
+  List<String> category
+
+  List<String> platform
+
+  String parent
+
+/**
    * Provides extra attributes for the JSON payload. Implementers must use @JsonAnyGetter.
    * @since 3.8
    */

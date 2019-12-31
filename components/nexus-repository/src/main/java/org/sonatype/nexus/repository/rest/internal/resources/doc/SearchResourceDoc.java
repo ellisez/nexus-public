@@ -12,6 +12,7 @@
  */
 package org.sonatype.nexus.repository.rest.internal.resources.doc;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -60,7 +61,8 @@ public interface SearchResourceDoc
       final String direction,
       @ApiParam(value = TIMEOUT_DESCRIPTION, allowEmptyValue = true)
       final Integer timeout,
-      @Context final UriInfo uriInfo);
+      @Context final UriInfo uriInfo,
+      @Context HttpServletResponse response);
 
   @ApiOperation("Search assets")
   Page<AssetXO> searchAssets(

@@ -12,16 +12,14 @@
  */
 package org.sonatype.nexus.repository.rest.internal.resources;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -63,10 +61,7 @@ import static org.sonatype.nexus.repository.rest.SearchUtils.SORT_DIRECTION;
 import static org.sonatype.nexus.repository.rest.SearchUtils.SORT_FIELD;
 import static org.sonatype.nexus.repository.rest.api.AssetXO.fromAsset;
 import static org.sonatype.nexus.repository.rest.api.AssetXO.fromElasticSearchMap;
-import static org.sonatype.nexus.repository.search.DefaultComponentMetadataProducer.GROUP;
-import static org.sonatype.nexus.repository.search.DefaultComponentMetadataProducer.NAME;
-import static org.sonatype.nexus.repository.search.DefaultComponentMetadataProducer.REPOSITORY_NAME;
-import static org.sonatype.nexus.repository.search.DefaultComponentMetadataProducer.VERSION;
+import static org.sonatype.nexus.repository.search.DefaultComponentMetadataProducer.*;
 import static org.sonatype.nexus.rest.APIConstants.V1_API_PREFIX;
 
 /**
@@ -127,18 +122,22 @@ public class SearchResource
       @QueryParam(SORT_FIELD) final String sort,
       @QueryParam(SORT_DIRECTION) final String direction,
       @QueryParam("timeout") final Integer timeout,
-      @Context final UriInfo uriInfo)
+      @Context final UriInfo uriInfo,
+      @Context HttpServletResponse response)
   {
     QueryBuilder query = searchUtils.buildQuery(uriInfo);
 
     int from = tokenEncoder.decode(continuationToken, query);
 
-    SearchResponse response = searchService
+    SearchResponse searchResponse = searchService
         .search(query, searchUtils.getSortBuilders(sort, direction, false), from, getPageSize(), timeout);
 
-    List<ComponentXO> componentXOs = Arrays.stream(response.getHits().hits())
+    List<ComponentXO> componentXOs = Arrays.stream(searchResponse.getHits().hits())
         .map(this::toComponent)
         .collect(toList());
+
+    // CORS
+    response.addHeader("Access-Control-Allow-Origin", "*");
 
     return new Page<>(componentXOs, componentXOs.size() == getPageSize() ?
         tokenEncoder.encode(from, getPageSize(), query) : null);
@@ -163,6 +162,11 @@ public class SearchResource
     componentXO.setId(new RepositoryItemIDXO(repository.getName(), hit.getId()).getValue());
     componentXO.setRepository(repository.getName());
     componentXO.setFormat(repository.getFormat().getValue());
+
+    componentXO.setTag((HashMap<String, List<String>>) source.get(TAG));
+    componentXO.setCategory((List<String>) source.get(CATEGORY));
+    componentXO.setPlatform((List<String>) source.get(PLATFORM));
+    componentXO.setParent((String) source.get(PARENT));
 
     for (SearchResourceExtension searchResourceExtension : searchResourceExtensions) {
       componentXO = searchResourceExtension.updateComponentXO(componentXO, hit);
