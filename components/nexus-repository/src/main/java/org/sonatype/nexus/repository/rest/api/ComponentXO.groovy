@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 /**
  * @since 3.8
  */
-@JsonPropertyOrder(["id", "repository", "format", "group", "name", "version", "assets", "tag", "category", "platform", "parent"])
+@JsonPropertyOrder(["id", "repository", "format", "group", "name", "version", "assets", "tag", "category", "platform", "parent", "type"])
 interface ComponentXO
 {
   String getId()
@@ -49,9 +49,10 @@ interface ComponentXO
 
   void setAssets(List<AssetXO> assets)
 
-  LinkedHashMap<String, List<String>> getTag()
+  HashMap<String, List<String>> getTag()
 
-  void setTag(LinkedHashMap<String, List<String>> tag)
+  @JsonPropertyOrder(["项目"])
+  void setTag(HashMap<String, List<String>> tag)
 
   List<String> getCategory()
 
@@ -64,6 +65,10 @@ interface ComponentXO
   String getParent()
 
   void setParent(String parent)
+
+  String getType()
+
+  void setType(String type)
 
   /**
    * Attributes to add the JSON payload

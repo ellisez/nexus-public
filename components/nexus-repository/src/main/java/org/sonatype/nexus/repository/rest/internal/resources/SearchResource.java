@@ -125,6 +125,9 @@ public class SearchResource
       @Context final UriInfo uriInfo,
       @Context HttpServletResponse response)
   {
+    // CORS
+    response.addHeader("Access-Control-Allow-Origin", "*");
+
     QueryBuilder query = searchUtils.buildQuery(uriInfo);
 
     int from = tokenEncoder.decode(continuationToken, query);
@@ -135,9 +138,6 @@ public class SearchResource
     List<ComponentXO> componentXOs = Arrays.stream(searchResponse.getHits().hits())
         .map(this::toComponent)
         .collect(toList());
-
-    // CORS
-    response.addHeader("Access-Control-Allow-Origin", "*");
 
     return new Page<>(componentXOs, componentXOs.size() == getPageSize() ?
         tokenEncoder.encode(from, getPageSize(), query) : null);
@@ -167,6 +167,7 @@ public class SearchResource
     componentXO.setCategory((List<String>) source.get(CATEGORY));
     componentXO.setPlatform((List<String>) source.get(PLATFORM));
     componentXO.setParent((String) source.get(PARENT));
+    componentXO.setType((String) source.get(TYPE));
 
     for (SearchResourceExtension searchResourceExtension : searchResourceExtensions) {
       componentXO = searchResourceExtension.updateComponentXO(componentXO, hit);

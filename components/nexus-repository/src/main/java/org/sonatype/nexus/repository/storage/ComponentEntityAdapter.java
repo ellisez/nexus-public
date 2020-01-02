@@ -85,6 +85,8 @@ public class ComponentEntityAdapter
 
   public static final String P_PLATFORM = "platform";
 
+  public static final String P_TYPE = "type";
+
   public static final String I_BUCKET_GROUP_NAME_VERSION = new OIndexNameBuilder()
       .type(DB_CLASS)
       .property(P_BUCKET)
@@ -227,6 +229,7 @@ public class ComponentEntityAdapter
     String source = document.field(P_SOURCE, OType.STRING);
     List<String> category = document.field(P_CATEGORY, List.class);
     List<String> platform = document.field(P_PLATFORM, List.class);
+    String type = document.field(P_TYPE, OType.STRING);
 
     entity.group(group);
     entity.name(name);
@@ -237,6 +240,7 @@ public class ComponentEntityAdapter
     entity.source(source);
     entity.category(category);
     entity.platform(platform);
+    entity.type(type);
 
     componentEntityAdapterExtensions.forEach(d -> d.readFields(document, entity));
   }
@@ -265,6 +269,8 @@ public class ComponentEntityAdapter
     document.field(P_CATEGORY, entity.category());
 
     document.field(P_PLATFORM, entity.platform());
+
+    document.field(P_TYPE, entity.type());
 
     componentEntityAdapterExtensions.forEach(d -> d.writeFields(document, entity));
   }

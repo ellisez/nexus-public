@@ -13,6 +13,7 @@ public class ComponentProperties {
     private String source;
     private List<String> category;
     private List<String> platform;
+    private String type;
 
     private static ObjectMapper objectMapper = new ObjectMapper();
 
@@ -30,6 +31,7 @@ public class ComponentProperties {
         String source = (String) map.get("source");
         List<String> category = (List<String>) map.get("category");
         List<String> platform = (List<String>) map.get("platform");
+        String type = (String) map.get("type");
 
         component.tag(tag);
         component.keyword(keyword(tag));
@@ -37,6 +39,7 @@ public class ComponentProperties {
         component.source(source);
         component.category(category);
         component.platform(platform);
+        component.type(type);
     }
 
     public void fillInComponent(final Component component) {
@@ -46,6 +49,7 @@ public class ComponentProperties {
         component.source(source);
         component.category(category);
         component.platform(platform);
+        component.type(type);
     }
 
     public static String keyword(Map<String, List<String>> tag) {
@@ -102,5 +106,13 @@ public class ComponentProperties {
 
     public void setPlatform(List<String> platform) {
         this.platform = platform;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

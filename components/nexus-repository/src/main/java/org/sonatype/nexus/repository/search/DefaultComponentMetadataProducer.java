@@ -91,6 +91,8 @@ public class DefaultComponentMetadataProducer
 
   public static final String PLATFORM = "platform";
 
+    public static final String TYPE = "type";
+
   private static final Logger log = LoggerFactory.getLogger(DefaultComponentMetadataProducer.class);
 
   private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern("YYYY-MM-dd'T'HH:mm:ss.SSSZ");
@@ -126,6 +128,7 @@ public class DefaultComponentMetadataProducer
     put(metadata, SOURCE, component.source());
     put(metadata, CATEGORY, component.category());
     put(metadata, PLATFORM, component.platform());
+    put(metadata, TYPE, component.type());
 
     // Prepend numbers in the version with 0s to make each number 5 digits
     String normalizedVersion = getNormalizedVersion(component);

@@ -216,4 +216,14 @@ public abstract class DecoratedComponent
   public Component platform(List<String> platform) {
     return component.platform(platform);
   }
+
+  @Override
+  public String type() {
+    return component.type();
+  }
+
+  @Override
+  public Component type(String type) {
+    return component.type(type);
+  }
 }

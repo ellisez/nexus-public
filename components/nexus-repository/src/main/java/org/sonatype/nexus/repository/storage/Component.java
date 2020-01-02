@@ -91,4 +91,8 @@ public interface Component
   List<String> platform();
 
   Component platform(List<String> platform);
+
+  String type();
+
+  Component type(String type);
 }

@@ -42,6 +42,8 @@ public class DefaultComponent
   private List<String> category;
 
   private List<String> platform;
+
+  private String type;
   /**
    * Gets the group or {@code null} if undefined.
    */
@@ -161,6 +163,17 @@ public class DefaultComponent
   @Override
   public DefaultComponent platform(List<String> platform) {
     this.platform = platform;
+    return this;
+  }
+
+  @Override
+  public String type() {
+    return type;
+  }
+
+  @Override
+  public DefaultComponent type(String type) {
+    this.type = type;
     return this;
   }
 }
